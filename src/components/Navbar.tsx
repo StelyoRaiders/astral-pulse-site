@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "./ui/button";
@@ -7,10 +7,23 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const currentY = window.scrollY;
+      setIsScrolled(currentY > 50);
+
+      if (currentY < 10) {
+        setIsHidden(false);
+      } else if (currentY > lastScrollY.current + 10) {
+        setIsHidden(true);
+      } else if (currentY < lastScrollY.current - 10) {
+        setIsHidden(false);
+      }
+
+      lastScrollY.current = currentY;
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -19,23 +32,27 @@ const Navbar = () => {
   const navLinks = [
     { name: "Inicio", href: "#home" },
     { name: "Tienda", href: "#home" },
-    { name: "Características", href: "#features" },
-    { name: "Galería", href: "#gallery" },
+    { name: "Caracter\u00c7\u00f0sticas", href: "#features" },
+    { name: "Galer\u00c7\u00f0a", href: "#gallery" },
     { name: "Estado", href: "#status" },
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'glass-dark' : 'bg-transparent'}`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "glass-dark" : "bg-transparent"
+      } ${isHidden ? "-translate-y-full" : "translate-y-0"} transform`}
+    >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-16 md:h-20 relative">
           {/* Logo */}
           <a href="#home" className="flex items-center gap-2 group">
             <div className="relative">
               <span className="font-heading text-3xl text-gradient tracking-wider">
-               🌴 OASIS 
+                OASIS
               </span>
               <span className="font-heading text-3xl text-foreground tracking-wider ml-1">
-                RP🌴
+                RP
               </span>
             </div>
           </a>
