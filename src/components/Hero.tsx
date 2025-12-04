@@ -10,7 +10,7 @@ const Hero = () => {
   }, []);
 
   const copyIP = () => {
-    navigator.clipboard.writeText("play.novarp.com:30120");
+    navigator.clipboard.writeText("play.oasisrp.es:30120");
     toast({
       title: "IP Copiada!",
       description: "La IP del servidor ha sido copiada al portapapeles",
@@ -67,7 +67,7 @@ const Hero = () => {
           <h1 
             className={`font-heading text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-normal mb-6 leading-none transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
-            <span className="text-gradient block">NOVA</span>
+            <span className="text-gradient block">Oasis</span>
             <span className="text-foreground">ROLEPLAY</span>
           </h1>
 
@@ -107,10 +107,10 @@ const Hero = () => {
           <div 
             className={`flex flex-wrap gap-4 mb-10 transition-all duration-700 delay-[400ms] ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
-            <a href="#" className="btn-gta">
-              <span>Comenzar a Jugar</span>
+            <a href="https://whitelist.oasisrp.es/" className="btn-gta">
+              <span>Comienza TU HISTORIA</span>
             </a>
-            <a href="#" className="btn-outline-gta">
+            <a href="https://discord.oasisrp.es/" className="btn-outline-gta">
               <span>Unirse a Discord</span>
             </a>
           </div>
@@ -122,7 +122,7 @@ const Hero = () => {
           >
             <div className="skew-x-[3deg] flex items-center gap-3">
               <code className="font-mono text-sm md:text-base text-foreground">
-                play.novarp.com:30120
+                play.oasisrp.es:30120
               </code>
               <Copy className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </div>

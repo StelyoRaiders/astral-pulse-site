@@ -66,7 +66,7 @@ const ImageCarousel = () => {
             <span className="text-foreground">NUESTRO MUNDO</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto text-lg">
-            Descubre las infinitas posibilidades en Nova Roleplay
+            Descubre las infinitas posibilidades en 🌴Oasis🌴 Roleplay
           </p>
         </div>
 

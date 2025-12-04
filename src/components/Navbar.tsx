@@ -18,6 +18,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Inicio", href: "#home" },
+    { name: "Tienda", href: "#home" },
     { name: "Características", href: "#features" },
     { name: "Galería", href: "#gallery" },
     { name: "Estado", href: "#status" },
@@ -31,10 +32,10 @@ const Navbar = () => {
           <a href="#home" className="flex items-center gap-2 group">
             <div className="relative">
               <span className="font-heading text-3xl text-gradient tracking-wider">
-                NOVA
+               🌴 OASIS 
               </span>
               <span className="font-heading text-3xl text-foreground tracking-wider ml-1">
-                RP
+                RP🌴
               </span>
             </div>
           </a>
@@ -66,8 +67,12 @@ const Navbar = () => {
               <span className="sr-only">Toggle theme</span>
             </Button>
 
-            <a href="#" className="hidden md:block btn-gta text-sm py-2 px-6">
-              <span>Jugar</span>
+            <a href="https://whitelist.oasisrp.es/" className="hidden md:block btn-gta text-sm py-2 px-6">
+              <span>WHITELIST</span>
+            </a>
+
+            <a href="https://discord.oasisrp.es/" className="hidden md:block btn-gta text-sm py-2 px-6">
+              <span>Discord</span>
             </a>
 
             {/* Mobile Menu Toggle */}
@@ -99,8 +104,11 @@ const Navbar = () => {
                 {link.name}
               </a>
             ))}
-            <a href="#" className="btn-gta text-sm text-center mt-2">
-              <span>Jugar Ahora</span>
+            <a href="https://whitelist.oasisrp.es/" className="btn-gta text-sm text-center mt-2">
+              <span>WHITELIST</span>
+            </a>
+            <a href="https://discord.oasisrp.es/" className="btn-gta text-sm text-center mt-2">
+              <span>Discord</span>
             </a>
           </div>
         </div>

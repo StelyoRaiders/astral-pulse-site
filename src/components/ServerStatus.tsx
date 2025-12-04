@@ -164,7 +164,7 @@ const ServerStatus = () => {
                 <Server className="w-6 h-6 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">IP del Servidor</p>
-                  <p className="font-mono text-sm">play.oasisrp.es:30120</p>
+                  <p className="font-mono text-sm">play.novarp.com</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -176,13 +176,18 @@ const ServerStatus = () => {
               </div>
             </div>
 
-            <a href="#" className="btn-gta inline-block">
-              <span>Conectarse Ahora</span>
-            </a>
-            
-            <a href="https://whitelist.oasisrp.es/" className="btn-gta inline-block">
-              <span>Solicita tu Whitelist</span>
-            </a>
+            <div className="flex flex-wrap gap-4">
+              <a href="#" className="btn-gta inline-block">
+                <span>Conectarse Ahora</span>
+              </a>
+              <a
+                href="https://whitelist.oasisrp.es/"
+                className="btn-gta inline-block"
+                style={{ backgroundImage: "linear-gradient(135deg, hsl(var(--gta-blue)), hsl(var(--gta-green)))" }}
+              >
+                <span>Solicita tu whitelist</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
