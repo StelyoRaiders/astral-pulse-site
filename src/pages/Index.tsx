@@ -12,9 +12,9 @@ const Index = () => {
       <AnimatedBackground />
       <Navbar />
       <Hero />
+      <ServerStatus />
       <Features />
       <ImageCarousel />
-      <ServerStatus />
       <Footer />
     </main>
   );
