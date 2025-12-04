@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Users, Signal, Clock, RefreshCw, Wifi, WifiOff, Activity, Server } from "lucide-react";
 import { Button } from "./ui/button";
+import { toast } from "@/hooks/use-toast";
 
 interface ServerData {
   players: number;
@@ -9,9 +10,23 @@ interface ServerData {
   uptime: string;
   ping: number;
   queue: number;
+  hostname?: string | null;
 }
 
+interface ServerStatusResponse {
+  online: boolean;
+  players: number;
+  maxPlayers: number;
+  hostname: string | null;
+  endpoint: string | null;
+  error?: string;
+}
+
+const FIVEM_HOST = import.meta.env.VITE_FIVEM_HOST as string | undefined;
+const FIVEM_JOIN_CODE = import.meta.env.VITE_FIVEM_JOIN_CODE as string | undefined;
+
 const ServerStatus = () => {
+  const serverIp = "play.oasisrp.es:30120";
   const [serverData, setServerData] = useState<ServerData>({
     players: 128,
     maxPlayers: 256,
@@ -19,36 +34,162 @@ const ServerStatus = () => {
     uptime: "14d 6h 32m",
     ping: 24,
     queue: 12,
+    hostname: null,
   });
+  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const playerPercentage = useMemo(() => {
+    if (!serverData.maxPlayers) return 0;
+    return Math.min((serverData.players / serverData.maxPlayers) * 100, 100);
+  }, [serverData.players, serverData.maxPlayers]);
+
+  // Helpers
+  const withTimeout = async <T,>(p: Promise<T>, ms = 5000): Promise<T> => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), ms);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const res = await (p as any);
+      return res;
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+
+  const fetchDirectHost = async (host: string): Promise<ServerStatusResponse> => {
+    const base = `http://${host}`;
+    try {
+      const [info, players] = await Promise.all([
+        withTimeout(
+          fetch(`${base}/info.json`, { cache: "no-store" }).then((r) => r.json()).catch(() => null),
+          5000
+        ),
+        withTimeout(
+          fetch(`${base}/players.json`, { cache: "no-store" }).then((r) => r.json()).catch(() => null),
+          5000
+        ),
+      ]);
+
+      if (!info) {
+        return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: host };
+      }
+
+      const maxPlayers =
+        Number(
+          info?.vars?.svMaxClients ??
+            info?.vars?.sv_maxClients ??
+            info?.svMaxclients ??
+            info?.sv_maxclients ??
+            0
+        ) || 0;
+
+      const hostname = info?.vars?.sv_projectName ?? info?.hostname ?? info?.server ?? null;
+      const playersCount = Array.isArray(players) ? players.length : Number(info?.clients ?? 0);
+
+      return {
+        online: true,
+        players: playersCount,
+        maxPlayers,
+        hostname,
+        endpoint: host,
+      };
+    } catch {
+      return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: host };
+    }
+  };
+
+  const fetchCfx = async (joinCode: string): Promise<ServerStatusResponse> => {
+    try {
+      const url = `https://servers-frontend.fivem.net/api/servers/single/${joinCode}`;
+      const data = await withTimeout(fetch(url, { cache: "no-store" }).then((r) => r.json()), 6000).catch(
+        () => null
+      );
+
+      const d = data?.Data;
+      if (!d) {
+        return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: null };
+      }
+
+      const maxPlayers = Number(d.sv_maxclients ?? d.maxClients ?? 0) || 0;
+      const endpoint = Array.isArray(d.connectEndPoints) ? d.connectEndPoints[0] ?? null : null;
+
+      return {
+        online: true,
+        players: Number(d.clients ?? 0),
+        maxPlayers,
+        hostname: d.hostname ?? null,
+        endpoint,
+      };
+    } catch {
+      return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: null };
+    }
+  };
+
+  const loadStatus = async (showToast = false) => {
+    if (!FIVEM_HOST && !FIVEM_JOIN_CODE) {
+      setIsLoading(false);
+      setIsRefreshing(false);
+      if (showToast) {
+        toast({
+          title: "Configura el servidor",
+          description: "Falta VITE_FIVEM_HOST o VITE_FIVEM_JOIN_CODE",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+
+    setIsRefreshing(true);
+    if (isLoading) setIsLoading(true);
+    const result = FIVEM_HOST ? await fetchDirectHost(FIVEM_HOST) : await fetchCfx(FIVEM_JOIN_CODE as string);
+
+    setServerData((prev) => ({
+      ...prev,
+      players: result.players,
+      maxPlayers: result.maxPlayers || prev.maxPlayers,
+      isOnline: result.online,
+      hostname: result.hostname ?? prev.hostname,
+      // Fallbacks
+      ping: result.online ? prev.ping : 0,
+      queue: result.online ? prev.queue : 0,
+    }));
+    setIsLoading(false);
+    setIsRefreshing(false);
+  };
 
   useEffect(() => {
+    loadStatus();
     const interval = setInterval(() => {
-      setServerData((prev) => ({
-        ...prev,
-        players: Math.floor(Math.random() * 50) + 100,
-        ping: Math.floor(Math.random() * 20) + 15,
-        queue: Math.floor(Math.random() * 20),
-      }));
+      loadStatus();
     }, 10000);
 
     return () => clearInterval(interval);
   }, []);
 
   const handleRefresh = () => {
-    setIsRefreshing(true);
-    setTimeout(() => {
-      setServerData((prev) => ({
-        ...prev,
-        players: Math.floor(Math.random() * 50) + 100,
-        ping: Math.floor(Math.random() * 20) + 15,
-        queue: Math.floor(Math.random() * 20),
-      }));
-      setIsRefreshing(false);
-    }, 1000);
+    loadStatus(true);
   };
 
-  const playerPercentage = (serverData.players / serverData.maxPlayers) * 100;
+  const handleCopyIp = async () => {
+    try {
+      await navigator.clipboard.writeText(serverIp);
+      setCopied(true);
+      toast({
+        title: "IP copiada",
+        description: `${serverIp} guardada en tu portapapeles`,
+      });
+      setTimeout(() => setCopied(false), 1800);
+    } catch (error) {
+      setCopied(false);
+      toast({
+        title: "No se pudo copiar",
+        description: "Intenta nuevamente o copia manualmente.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <section id="status" className="py-24 relative overflow-hidden">
@@ -71,7 +212,9 @@ const ServerStatus = () => {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-4">
                     <div className={`w-16 h-16 rounded-full flex items-center justify-center ${serverData.isOnline ? 'bg-success/20' : 'bg-destructive/20'}`}>
-                      {serverData.isOnline ? (
+                      {isLoading ? (
+                        <RefreshCw className="w-8 h-8 text-primary animate-spin" />
+                      ) : serverData.isOnline ? (
                         <Wifi className="w-8 h-8 text-success animate-pulse" />
                       ) : (
                         <WifiOff className="w-8 h-8 text-destructive" />
@@ -80,7 +223,7 @@ const ServerStatus = () => {
                     <div>
                       <p className="text-sm text-muted-foreground uppercase tracking-wider">Estado del Servidor</p>
                       <p className={`text-3xl font-heading ${serverData.isOnline ? 'text-success' : 'text-destructive'}`}>
-                        {serverData.isOnline ? "ONLINE" : "OFFLINE"}
+                        {isLoading ? "Consultando..." : serverData.isOnline ? "ONLINE" : "OFFLINE"}
                       </p>
                     </div>
                   </div>
@@ -99,11 +242,13 @@ const ServerStatus = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Jugadores Conectados</span>
-                    <span className="font-heading text-primary">{serverData.players}/{serverData.maxPlayers}</span>
+                    <span className="font-heading text-primary">
+                      {isLoading ? "..." : `${serverData.players}/${serverData.maxPlayers || "?"}`}
+                    </span>
                   </div>
                   <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-primary rounded-full transition-all duration-500 shadow-glow"
+                      className={`h-full bg-gradient-primary rounded-full transition-all duration-500 shadow-glow ${isLoading ? "animate-pulse" : ""}`}
                       style={{ width: `${playerPercentage}%` }}
                     />
                   </div>
@@ -119,7 +264,9 @@ const ServerStatus = () => {
               >
                 <Signal className="w-8 h-8 text-secondary mb-3" />
                 <p className="text-sm text-muted-foreground uppercase tracking-wider">Ping</p>
-                <p className="text-2xl font-heading text-secondary">{serverData.ping}ms</p>
+                <p className="text-2xl font-heading text-secondary">
+                  {isLoading ? "..." : `${serverData.ping}ms`}
+                </p>
               </div>
               
               <div 
@@ -128,7 +275,9 @@ const ServerStatus = () => {
               >
                 <Clock className="w-8 h-8 text-gta-green mb-3" />
                 <p className="text-sm text-muted-foreground uppercase tracking-wider">Uptime</p>
-                <p className="text-2xl font-heading text-gta-green">{serverData.uptime}</p>
+                <p className="text-2xl font-heading text-gta-green">
+                  {isLoading ? "..." : serverData.uptime}
+                </p>
               </div>
             </div>
 
@@ -141,7 +290,9 @@ const ServerStatus = () => {
                 <Activity className="w-8 h-8 text-gta-blue" />
                 <div>
                   <p className="text-sm text-muted-foreground uppercase tracking-wider">En Cola</p>
-                  <p className="text-2xl font-heading text-gta-blue">{serverData.queue} jugadores</p>
+                  <p className="text-2xl font-heading text-gta-blue">
+                    {isLoading ? "..." : `${serverData.queue} jugadores`}
+                  </p>
                 </div>
               </div>
             </div>
@@ -160,11 +311,25 @@ const ServerStatus = () => {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="flex items-center gap-3">
+              <div
+                className="flex items-center gap-3 glass-dark border border-border/30 rounded-lg px-4 py-3 cursor-pointer hover:border-primary hover:shadow-glow transition-colors"
+                onClick={handleCopyIp}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    handleCopyIp();
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label="Copiar IP del servidor"
+              >
                 <Server className="w-6 h-6 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">IP del Servidor</p>
-                  <p className="font-mono text-sm">play.novarp.com</p>
+                  <p className="font-mono text-sm text-foreground">{serverIp}</p>
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -177,7 +342,7 @@ const ServerStatus = () => {
             </div>
 
             <div className="flex flex-wrap gap-4">
-              <a href="#" className="btn-gta inline-block">
+              <a href="fivem://connect/play.oasisrp.es:30120" className="btn-gta inline-block">
                 <span>Conectarse Ahora</span>
               </a>
               <a

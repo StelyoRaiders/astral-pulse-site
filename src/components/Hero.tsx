@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, Copy, Users, Zap } from "lucide-react";
+import SantaOverlay from "./SantaOverlay";
+import { ENABLE_CHRISTMAS } from "@/config/featureFlags";
 import { toast } from "@/hooks/use-toast";
 
 const Hero = () => {
@@ -54,6 +56,15 @@ const Hero = () => {
 
       {/* Content */}
       <div className="container relative z-10 px-4 pt-20">
+        {ENABLE_CHRISTMAS && (
+          <div className="absolute z-30" style={{ top: "120px", right: "18%" }}>
+            <SantaOverlay
+              position="absolute"
+              style={{ top: 0, right: 0, left: "auto" }}
+              className="scale-75 md:scale-90"
+            />
+          </div>
+        )}
         <div className="max-w-4xl">
           {/* Status Badge */}
           <div 
