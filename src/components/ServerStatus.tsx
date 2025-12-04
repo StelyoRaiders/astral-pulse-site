@@ -164,7 +164,7 @@ const ServerStatus = () => {
                 <Server className="w-6 h-6 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">IP del Servidor</p>
-                  <p className="font-mono text-sm">play.novarp.com</p>
+                  <p className="font-mono text-sm">play.oasisrp.es:30120</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -178,6 +178,10 @@ const ServerStatus = () => {
 
             <a href="#" className="btn-gta inline-block">
               <span>Conectarse Ahora</span>
+            </a>
+            
+            <a href="https://whitelist.oasisrp.es/" className="btn-gta inline-block">
+              <span>Solicita tu Whitelist</span>
             </a>
           </div>
         </div>
