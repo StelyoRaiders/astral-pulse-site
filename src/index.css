@@ -1,0 +1,513 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700;900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 32 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 45 100% 55%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 32 90% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 32 100% 50%;
+
+    --radius: 0.5rem;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --gta-orange: 32 100% 50%;
+    --gta-yellow: 45 100% 55%;
+    --gta-green: 120 60% 45%;
+    --gta-blue: 200 80% 50%;
+    --gta-red: 0 80% 50%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(32 100% 50%), hsl(45 100% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 20%), hsl(0 0% 10%));
+    --gradient-glow: radial-gradient(ellipse at center, hsl(32 100% 50% / 0.3), transparent 70%);
+
+    --shadow-glow: 0 0 30px hsl(32 100% 50% / 0.4);
+    --shadow-glow-strong: 0 0 60px hsl(32 100% 50% / 0.6);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 32 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 45 100% 55%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 32 100% 50%;
+
+    --chart-1: 32 100% 50%;
+    --chart-2: 45 100% 55%;
+    --chart-3: 120 60% 45%;
+    --chart-4: 200 80% 50%;
+    --chart-5: 0 80% 50%;
+
+    --font-heading: 'Bebas Neue', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+  }
+
+  .dark {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 32 100% 55%;
+    --primary-foreground: 0 0% 5%;
+
+    --secondary: 45 100% 60%;
+    --secondary-foreground: 0 0% 5%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 32 90% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 32 100% 55%;
+
+    --success: 142 76% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --gta-orange: 32 100% 55%;
+    --gta-yellow: 45 100% 60%;
+    --gta-green: 120 60% 50%;
+    --gta-blue: 200 80% 55%;
+    --gta-red: 0 80% 55%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(32 100% 55%), hsl(45 100% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 15%), hsl(0 0% 8%));
+    --gradient-glow: radial-gradient(ellipse at center, hsl(32 100% 55% / 0.4), transparent 70%);
+
+    --shadow-glow: 0 0 40px hsl(32 100% 55% / 0.5);
+    --shadow-glow-strong: 0 0 80px hsl(32 100% 55% / 0.7);
+
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 32 100% 55%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 45 100% 60%;
+    --sidebar-accent-foreground: 0 0% 5%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 32 100% 55%;
+
+    --chart-1: 32 100% 55%;
+    --chart-2: 45 100% 60%;
+    --chart-3: 120 60% 50%;
+    --chart-4: 200 80% 55%;
+    --chart-5: 0 80% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: 0.05em;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .text-gradient-secondary {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--muted-foreground)));
+  }
+
+  .bg-gradient-primary {
+    background-image: var(--gradient-primary);
+  }
+
+  .bg-gradient-secondary {
+    background-image: var(--gradient-secondary);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .shadow-glow-strong {
+    box-shadow: var(--shadow-glow-strong);
+  }
+
+  .glow-effect {
+    position: relative;
+  }
+
+  .glow-effect::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: var(--gradient-primary);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    filter: blur(20px);
+    transition: opacity 0.3s ease;
+  }
+
+  .glow-effect:hover::before {
+    opacity: 0.7;
+  }
+
+  .glass {
+    @apply backdrop-blur-xl;
+    background: hsl(var(--card) / 0.7);
+    border: 1px solid hsl(var(--border) / 0.3);
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-xl;
+    background: hsl(0 0% 0% / 0.6);
+    border: 1px solid hsl(var(--border) / 0.2);
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .transform-3d {
+    transform-style: preserve-3d;
+  }
+
+  .clip-wave {
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+  }
+
+  .clip-wave-reverse {
+    clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .clip-diagonal {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%);
+  }
+
+  .clip-curve-left {
+    border-radius: 0 100px 100px 0;
+  }
+}
+
+@layer components {
+  .btn-gta {
+    @apply relative overflow-hidden px-8 py-4 font-heading text-xl tracking-wider uppercase;
+    @apply transition-all duration-300 ease-out;
+    @apply skew-x-[-5deg];
+    background-image: var(--gradient-primary);
+    color: hsl(var(--background));
+  }
+
+  .btn-gta > span {
+    @apply skew-x-[5deg] inline-block;
+  }
+
+  .btn-gta::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, hsl(var(--gta-yellow)), hsl(var(--gta-orange)));
+  }
+
+  .btn-gta:hover::before {
+    @apply opacity-100;
+  }
+
+  .btn-gta:hover {
+    box-shadow: var(--shadow-glow-strong);
+    transform: skewX(-5deg) translateY(-3px);
+  }
+
+  .btn-outline-gta {
+    @apply relative px-6 py-3 font-heading text-lg tracking-wider uppercase;
+    @apply border-2 transition-all duration-300;
+    @apply skew-x-[-5deg];
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+    background: transparent;
+  }
+
+  .btn-outline-gta > span {
+    @apply skew-x-[5deg] inline-block;
+  }
+
+  .btn-outline-gta:hover {
+    background: hsl(var(--primary) / 0.15);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .card-gta {
+    @apply glass-dark rounded-none p-6;
+    @apply border-l-4;
+    border-left-color: hsl(var(--primary));
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+  }
+
+  .status-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2;
+    @apply font-heading text-sm uppercase tracking-wider;
+    @apply skew-x-[-5deg];
+    background: hsl(var(--success) / 0.2);
+    border-left: 3px solid hsl(var(--success));
+  }
+
+  .status-badge > span {
+    @apply skew-x-[5deg] inline-block;
+  }
+
+  .status-badge.offline {
+    background: hsl(var(--destructive) / 0.2);
+    border-left-color: hsl(var(--destructive));
+  }
+
+  .stat-card {
+    @apply relative p-6 overflow-hidden;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+    border-left: 4px solid hsl(var(--primary));
+  }
+
+  .stat-card::after {
+    content: '';
+    @apply absolute top-0 right-0 w-24 h-24 opacity-10;
+    background: hsl(var(--primary));
+    border-radius: 0 0 0 100%;
+  }
+}
+/* Agregar estos estilos al final de tu archivo src/index.css */
+
+/* Efecto de desenfoque suave para los fondos de luz */
+@layer utilities {
+  .blur-3xl {
+    filter: blur(120px);
+  }
+  
+  .blur-4xl {
+    filter: blur(180px);
+  }
+}
+
+/* Mejoras en las animaciones existentes */
+@layer utilities {
+  /* Animación de float más suave */
+  @keyframes float {
+    0%, 100% { 
+      transform: translateY(0) translateX(0) rotate(0deg);
+    }
+    33% {
+      transform: translateY(-20px) translateX(10px) rotate(3deg);
+    }
+    66% {
+      transform: translateY(-10px) translateX(-10px) rotate(-3deg);
+    }
+  }
+
+  @keyframes float-slow {
+    0%, 100% { 
+      transform: translateY(0) translateX(0);
+    }
+    50% { 
+      transform: translateY(-30px) translateX(15px);
+    }
+  }
+
+  /* Efecto de respiración para fondos */
+  @keyframes breathe {
+    0%, 100% {
+      opacity: 0.1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.2;
+      transform: scale(1.1);
+    }
+  }
+
+  .animate-breathe {
+    animation: breathe 8s ease-in-out infinite;
+  }
+
+  /* Efecto de onda expandiéndose */
+  @keyframes ripple {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.3;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  .animate-ripple {
+    animation: ripple 4s ease-out infinite;
+  }
+}
+
+/* Mejoras en las tarjetas con efectos de hover mejorados */
+@layer components {
+  .card-gta {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .card-gta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, 
+      hsl(var(--primary) / 0.3), 
+      hsl(var(--secondary) / 0.3)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .card-gta:hover::before {
+    opacity: 1;
+  }
+
+  .card-gta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px hsl(var(--primary) / 0.3);
+  }
+
+  /* Efecto de brillo en los botones */
+  .btn-gta::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsla(var(--background) / 0.3),
+      transparent
+    );
+    transform: translateX(-100%) skewX(-20deg);
+    transition: transform 0.6s;
+  }
+
+  .btn-gta:hover::after {
+    transform: translateX(100%) skewX(-20deg);
+  }
+
+  /* Efecto de vidrio mejorado */
+  .glass-dark {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-dark::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100px;
+    height: 200%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsla(var(--primary) / 0.1),
+      transparent
+    );
+    transform: translateX(100%);
+    transition: transform 0.6s;
+  }
+
+  .glass-dark:hover::after {
+    transform: translateX(-200%);
+  }
+
+  /* Mejora del stat-card */
+  .stat-card {
+    position: relative;
+    overflow: visible;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, 
+      hsl(var(--primary) / 0.2), 
+      hsl(var(--secondary) / 0.2)
+    );
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    filter: blur(10px);
+    transition: opacity 0.3s ease;
+  }
+
+  .stat-card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Efecto parallax suave en scroll */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .parallax-element {
+      animation: parallax linear;
+      animation-timeline: scroll();
+    }
+
+    @keyframes parallax {
+      to {
+        transform: translateY(-50px);
+      }
+    }
+  }
+}
