@@ -36,7 +36,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <a href="#home" className="inline-block mb-6">
               <span className="font-heading text-4xl">
-                <span className="text-gradient">NOVA</span>
+                <span className="text-gradient">OASIS</span>
                 <span className="text-foreground ml-2">ROLEPLAY</span>
               </span>
             </a>
