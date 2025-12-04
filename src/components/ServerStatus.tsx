@@ -58,8 +58,16 @@ const ServerStatus = () => {
     }
   };
 
+  const normalizeHost = (host: string) => {
+    // Si no incluye protocolo, usamos el del sitio para evitar mixed content
+    const hasProtocol = host.startsWith("http://") || host.startsWith("https://");
+    if (hasProtocol) return host;
+    const protocol = window.location.protocol === "https:" ? "https" : "http";
+    return `${protocol}://${host}`;
+  };
+
   const fetchDirectHost = async (host: string): Promise<ServerStatusResponse> => {
-    const base = `http://${host}`;
+    const base = normalizeHost(host);
     try {
       const [info, players] = await Promise.all([
         withTimeout(
