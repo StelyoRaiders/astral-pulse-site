@@ -31,9 +31,9 @@ const ServerStatus = () => {
     players: 128,
     maxPlayers: 256,
     isOnline: true,
-    uptime: "14d 6h 32m",
+    uptime: "8h 23m",
     ping: 24,
-    queue: 12,
+    queue: 2,
     hostname: null,
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -151,7 +151,24 @@ const ServerStatus = () => {
 
     setIsRefreshing(true);
     if (isLoading) setIsLoading(true);
-    const result = FIVEM_HOST ? await fetchDirectHost(FIVEM_HOST) : await fetchCfx(FIVEM_JOIN_CODE as string);
+
+    let result: ServerStatusResponse | null = null;
+
+    if (FIVEM_HOST) {
+      result = await fetchDirectHost(FIVEM_HOST);
+    }
+
+    // Si falla por CORS o no responde, intenta cfx.re si hay join code
+    if ((!result || !result.online) && FIVEM_JOIN_CODE) {
+      const cfxResult = await fetchCfx(FIVEM_JOIN_CODE);
+      if (cfxResult) {
+        result = cfxResult;
+      }
+    }
+
+    if (!result) {
+      result = { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: null };
+    }
 
     setServerData((prev) => ({
       ...prev,
