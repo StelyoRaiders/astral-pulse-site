@@ -1,39 +1,22 @@
 import { useEffect, useState, useMemo } from "react";
-import { Users, Signal, Clock, RefreshCw, Wifi, WifiOff, Activity, Server } from "lucide-react";
+import { Users, Signal, RefreshCw, Wifi, WifiOff, Server } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "@/hooks/use-toast";
+import { fetchServerStatus } from "@/api/server-status";
 
 interface ServerData {
   players: number;
   maxPlayers: number;
   isOnline: boolean;
-  uptime: string;
-  ping: number;
-  queue: number;
   hostname?: string | null;
 }
-
-interface ServerStatusResponse {
-  online: boolean;
-  players: number;
-  maxPlayers: number;
-  hostname: string | null;
-  endpoint: string | null;
-  error?: string;
-}
-
-const FIVEM_HOST = import.meta.env.VITE_FIVEM_HOST as string | undefined;
-const FIVEM_JOIN_CODE = import.meta.env.VITE_FIVEM_JOIN_CODE as string | undefined;
 
 const ServerStatus = () => {
   const serverIp = "play.oasisrp.es:30120";
   const [serverData, setServerData] = useState<ServerData>({
-    players: 128,
+    players: 0,
     maxPlayers: 256,
-    isOnline: true,
-    uptime: "8h 23m",
-    ping: 24,
-    queue: 2,
+    isOnline: false,
     hostname: null,
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -45,141 +28,42 @@ const ServerStatus = () => {
     return Math.min((serverData.players / serverData.maxPlayers) * 100, 100);
   }, [serverData.players, serverData.maxPlayers]);
 
-  // Helpers
-  const withTimeout = async <T,>(p: Promise<T>, ms = 5000): Promise<T> => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), ms);
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const res = await (p as any);
-      return res;
-    } finally {
-      clearTimeout(timeout);
-    }
-  };
-
-  const normalizeHost = (host: string) => {
-    // Si no incluye protocolo, usamos el del sitio para evitar mixed content
-    const hasProtocol = host.startsWith("http://") || host.startsWith("https://");
-    if (hasProtocol) return host;
-    const protocol = window.location.protocol === "https:" ? "https" : "http";
-    return `${protocol}://${host}`;
-  };
-
-  const fetchDirectHost = async (host: string): Promise<ServerStatusResponse> => {
-    const base = normalizeHost(host);
-    try {
-      const [info, players] = await Promise.all([
-        withTimeout(
-          fetch(`${base}/info.json`, { cache: "no-store" }).then((r) => r.json()).catch(() => null),
-          5000
-        ),
-        withTimeout(
-          fetch(`${base}/players.json`, { cache: "no-store" }).then((r) => r.json()).catch(() => null),
-          5000
-        ),
-      ]);
-
-      if (!info) {
-        return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: host };
-      }
-
-      const maxPlayers =
-        Number(
-          info?.vars?.svMaxClients ??
-            info?.vars?.sv_maxClients ??
-            info?.svMaxclients ??
-            info?.sv_maxclients ??
-            0
-        ) || 0;
-
-      const hostname = info?.vars?.sv_projectName ?? info?.hostname ?? info?.server ?? null;
-      const playersCount = Array.isArray(players) ? players.length : Number(info?.clients ?? 0);
-
-      return {
-        online: true,
-        players: playersCount,
-        maxPlayers,
-        hostname,
-        endpoint: host,
-      };
-    } catch {
-      return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: host };
-    }
-  };
-
-  const fetchCfx = async (joinCode: string): Promise<ServerStatusResponse> => {
-    try {
-      const url = `https://servers-frontend.fivem.net/api/servers/single/${joinCode}`;
-      const data = await withTimeout(fetch(url, { cache: "no-store" }).then((r) => r.json()), 6000).catch(
-        () => null
-      );
-
-      const d = data?.Data;
-      if (!d) {
-        return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: null };
-      }
-
-      const maxPlayers = Number(d.sv_maxclients ?? d.maxClients ?? 0) || 0;
-      const endpoint = Array.isArray(d.connectEndPoints) ? d.connectEndPoints[0] ?? null : null;
-
-      return {
-        online: true,
-        players: Number(d.clients ?? 0),
-        maxPlayers,
-        hostname: d.hostname ?? null,
-        endpoint,
-      };
-    } catch {
-      return { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: null };
-    }
-  };
-
   const loadStatus = async (showToast = false) => {
-    if (!FIVEM_HOST && !FIVEM_JOIN_CODE) {
-      setIsLoading(false);
-      setIsRefreshing(false);
+    setIsRefreshing(true);
+
+    try {
+      const result = await fetchServerStatus(serverIp);
+
+      setServerData({
+        players: result.players,
+        maxPlayers: result.maxPlayers,
+        isOnline: result.online,
+        hostname: result.hostname,
+      });
+
+      if (showToast && result.online) {
+        toast({
+          title: "Estado actualizado",
+          description: `${result.players}/${result.maxPlayers} jugadores en línea`,
+        });
+      }
+    } catch (error) {
+      console.error("Error al obtener estado del servidor:", error);
+      setServerData((prev) => ({
+        ...prev,
+        isOnline: false,
+        players: 0,
+      }));
+
       if (showToast) {
         toast({
-          title: "Configura el servidor",
-          description: "Falta VITE_FIVEM_HOST o VITE_FIVEM_JOIN_CODE",
+          title: "Error",
+          description: "No se pudo conectar con el servidor",
           variant: "destructive",
         });
       }
-      return;
     }
 
-    setIsRefreshing(true);
-    if (isLoading) setIsLoading(true);
-
-    let result: ServerStatusResponse | null = null;
-
-    if (FIVEM_HOST) {
-      result = await fetchDirectHost(FIVEM_HOST);
-    }
-
-    // Si falla por CORS o no responde, intenta cfx.re si hay join code
-    if ((!result || !result.online) && FIVEM_JOIN_CODE) {
-      const cfxResult = await fetchCfx(FIVEM_JOIN_CODE);
-      if (cfxResult) {
-        result = cfxResult;
-      }
-    }
-
-    if (!result) {
-      result = { online: false, players: 0, maxPlayers: 0, hostname: null, endpoint: null };
-    }
-
-    setServerData((prev) => ({
-      ...prev,
-      players: result.players,
-      maxPlayers: result.maxPlayers || prev.maxPlayers,
-      isOnline: result.online,
-      hostname: result.hostname ?? prev.hostname,
-      // Fallbacks
-      ping: result.online ? prev.ping : 0,
-      queue: result.online ? prev.queue : 0,
-    }));
     setIsLoading(false);
     setIsRefreshing(false);
   };
@@ -228,7 +112,7 @@ const ServerStatus = () => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Side - Dynamic Cards */}
           <div className="space-y-6">
-            {/* Main Status Card - Curved */}
+            {/* Main Status Card */}
             <div 
               className="relative animate-fade-in-up opacity-0"
               style={{ animationDelay: "0.1s" }}
@@ -287,10 +171,10 @@ const ServerStatus = () => {
                 className="glass-dark p-6 rounded-r-[40px] border-l-4 border-secondary animate-fade-in-up opacity-0"
                 style={{ animationDelay: "0.2s" }}
               >
-                <Signal className="w-8 h-8 text-secondary mb-3" />
-                <p className="text-sm text-muted-foreground uppercase tracking-wider">Ping</p>
+                <Users className="w-8 h-8 text-secondary mb-3" />
+                <p className="text-sm text-muted-foreground uppercase tracking-wider">Capacidad</p>
                 <p className="text-2xl font-heading text-secondary">
-                  {isLoading ? "..." : `${serverData.ping}ms`}
+                  {isLoading ? "..." : `${serverData.maxPlayers}`}
                 </p>
               </div>
               
@@ -298,29 +182,31 @@ const ServerStatus = () => {
                 className="glass-dark p-6 rounded-r-[40px] border-l-4 border-gta-green animate-fade-in-up opacity-0 mt-8"
                 style={{ animationDelay: "0.3s" }}
               >
-                <Clock className="w-8 h-8 text-gta-green mb-3" />
-                <p className="text-sm text-muted-foreground uppercase tracking-wider">Uptime</p>
+                <Server className="w-8 h-8 text-gta-green mb-3" />
+                <p className="text-sm text-muted-foreground uppercase tracking-wider">Estado</p>
                 <p className="text-2xl font-heading text-gta-green">
-                  {isLoading ? "..." : serverData.uptime}
+                  {isLoading ? "..." : serverData.isOnline ? "✓ Activo" : "✗ Inactivo"}
                 </p>
               </div>
             </div>
 
-            {/* Queue Card */}
-            <div 
-              className="glass-dark p-6 rounded-r-[50px] border-l-4 border-gta-blue animate-fade-in-up opacity-0 max-w-[300px]"
-              style={{ animationDelay: "0.4s" }}
-            >
-              <div className="flex items-center gap-4">
-                <Activity className="w-8 h-8 text-gta-blue" />
-                <div>
-                  <p className="text-sm text-muted-foreground uppercase tracking-wider">En Cola</p>
-                  <p className="text-2xl font-heading text-gta-blue">
-                    {isLoading ? "..." : `${serverData.queue} jugadores`}
-                  </p>
+            {/* Hostname Card */}
+            {serverData.hostname && (
+              <div 
+                className="glass-dark p-6 rounded-r-[50px] border-l-4 border-gta-blue animate-fade-in-up opacity-0"
+                style={{ animationDelay: "0.4s" }}
+              >
+                <div className="flex items-center gap-4">
+                  <Users className="w-8 h-8 text-gta-blue" />
+                  <div>
+                    <p className="text-sm text-muted-foreground uppercase tracking-wider">Servidor</p>
+                    <p className="text-lg font-heading text-gta-blue truncate">
+                      {serverData.hostname}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right Side - Content */}
@@ -353,8 +239,6 @@ const ServerStatus = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">IP del Servidor</p>
                   <p className="font-mono text-sm text-foreground">{serverIp}</p>
-                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
