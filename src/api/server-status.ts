@@ -1,21 +1,16 @@
 // API para obtener estado del servidor FiveM
-// Usa un proxy CORS para evitar problemas de seguridad del navegador
+// Usa la API oficial de CFX.re
 
-interface InfoJson {
-  server?: string;
-  hostname?: string;
-  clients?: number;
-  vars?: {
-    svMaxClients?: string | number;
-    sv_maxClients?: string | number;
-    sv_projectName?: string;
+interface CfxServerData {
+  Data?: {
+    clients?: number;
+    sv_maxclients?: number;
+    maxClients?: number;
+    hostname?: string;
+    vars?: {
+      sv_projectName?: string;
+    };
   };
-  sv_maxclients?: string | number;
-  svMaxclients?: string | number;
-}
-
-interface PlayersJson {
-  // Array de jugadores, usamos solo length
 }
 
 interface ServerStatusResponse {
@@ -36,53 +31,19 @@ async function withTimeout<T>(p: Promise<T>, ms = 5000): Promise<T> {
 }
 
 export async function fetchServerStatus(
-  host: string
+  joinCode: string
 ): Promise<ServerStatusResponse> {
   try {
-    // Intentar múltiples proxies CORS
-    const proxies = [
-      "https://corsproxy.io/?",
-      "https://cors-anywhere.herokuapp.com/",
-    ];
-    
-    const baseUrl = `http://${host}`;
-    let infoData: InfoJson | null = null;
-    let playersData: PlayersJson[] | null = null;
+    const url = `https://servers-frontend.fivem.net/api/servers/single/${joinCode}`;
 
-    // Intentar con el primer proxy
-    for (const proxyUrl of proxies) {
-      try {
-        const [info, players] = await Promise.all([
-          withTimeout(
-            fetch(`${proxyUrl}${baseUrl}/info.json`, {
-              cache: "no-store",
-            })
-              .then((r) => r.json() as Promise<InfoJson>)
-              .catch(() => null),
-            6000
-          ),
-          withTimeout(
-            fetch(`${proxyUrl}${baseUrl}/players.json`, {
-              cache: "no-store",
-            })
-              .then((r) => r.json() as Promise<PlayersJson[]>)
-              .catch(() => null),
-            6000
-          ),
-        ]);
+    const data = await withTimeout(
+      fetch(url, { cache: "no-store" })
+        .then((r) => r.json() as Promise<CfxServerData>)
+        .catch(() => null),
+      6000
+    );
 
-        if (info) {
-          infoData = info;
-          playersData = players;
-          break; // Si funciona, salir del loop
-        }
-      } catch (e) {
-        console.warn(`Proxy ${proxyUrl} falló, intentando siguiente...`);
-        continue;
-      }
-    }
-
-    if (!infoData) {
+    if (!data?.Data) {
       return {
         online: false,
         players: 0,
@@ -92,28 +53,17 @@ export async function fetchServerStatus(
       };
     }
 
-    const maxPlayers =
-      Number(
-        infoData.vars?.svMaxClients ??
-          infoData.vars?.sv_maxClients ??
-          infoData.svMaxclients ??
-          infoData.sv_maxclients ??
-          0
-      ) || 0;
-
+    const serverData = data.Data;
+    const maxPlayers = Number(
+      serverData.sv_maxclients ?? serverData.maxClients ?? 256
+    );
     const hostname =
-      infoData.vars?.sv_projectName ??
-      infoData.hostname ??
-      infoData.server ??
-      null;
-
-    const playersCount = Array.isArray(playersData)
-      ? playersData.length
-      : Number(infoData.clients ?? 0);
+      serverData.vars?.sv_projectName ?? serverData.hostname ?? null;
+    const players = Number(serverData.clients ?? 0);
 
     return {
       online: true,
-      players: playersCount,
+      players,
       maxPlayers,
       hostname,
     };

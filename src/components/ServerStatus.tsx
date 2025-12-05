@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Users, Signal, RefreshCw, Wifi, WifiOff, Server } from "lucide-react";
+import { Users, RefreshCw, Wifi, WifiOff, Server } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "@/hooks/use-toast";
 import { fetchServerStatus } from "@/api/server-status";
@@ -10,6 +10,8 @@ interface ServerData {
   isOnline: boolean;
   hostname?: string | null;
 }
+
+const FIVEM_JOIN_CODE = import.meta.env.VITE_FIVEM_JOIN_CODE as string | undefined;
 
 const ServerStatus = () => {
   const serverIp = "play.oasisrp.es:30120";
@@ -29,10 +31,17 @@ const ServerStatus = () => {
   }, [serverData.players, serverData.maxPlayers]);
 
   const loadStatus = async (showToast = false) => {
+    if (!FIVEM_JOIN_CODE) {
+      console.warn("VITE_FIVEM_JOIN_CODE no configurado");
+      setIsLoading(false);
+      setIsRefreshing(false);
+      return;
+    }
+
     setIsRefreshing(true);
 
     try {
-      const result = await fetchServerStatus(serverIp);
+      const result = await fetchServerStatus(FIVEM_JOIN_CODE);
 
       setServerData({
         players: result.players,
