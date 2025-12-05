@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, XCircle, ChevronDown, ShieldCheck, ShieldAlert } from "lucide-react";
+import { CheckCircle2, XCircle, ChevronDown, ShieldCheck, ShieldAlert, FileText, ExternalLink } from "lucide-react";
 
 const rules = [
   {
@@ -44,7 +44,7 @@ const Rules = () => {
   const [openRule, setOpenRule] = useState(rules[0].title);
 
   return (
-    <section id="rules" className="py-24 relative overflow-hidden">
+    <section id="normativa" className="py-24 relative overflow-hidden">
       <div className="container relative z-10 px-4">
         <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 items-center">
           {/* Visual panel */}
@@ -147,6 +147,65 @@ const Rules = () => {
                   </button>
                 );
               })}
+            </div>
+          </div>
+        </div>
+
+        {/* Normativa Extensa y Normativa Ilegal */}
+        <div className="mt-24 pt-24 border-t border-border/20">
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Normativa Extensa */}
+            <div className="max-w-full relative overflow-hidden">
+              {/* Borde izquierdo amarillo grueso */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary to-transparent rounded-full opacity-80" />
+              
+              <span className="status-badge mb-4 inline-flex">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-primary font-heading">Documentación completa</span>
+              </span>
+              <h2 className="font-heading text-4xl md:text-5xl leading-tight mb-4">
+                Normativa <span className="text-gradient">EXTENSA</span> del servidor
+              </h2>
+              <p className="text-muted-foreground mb-8 max-w-2xl border-l-2 border-primary/30 pl-4">
+                Para obtener más detalles sobre todas las reglas, políticas y procedimientos del servidor, consulta nuestro documento de normativa completa.
+              </p>
+              <a
+                href="https://docs.google.com/document/d/1WC5GTpRY6HwFp-NS7-KJuHNAJKM-ulOy7i3z7equo7I/edit?tab=t.0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-gta inline-flex items-center gap-2 py-3 px-8"
+              >
+                <FileText className="w-5 h-5" />
+                <span>Ver normativa extensa</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+
+            {/* Normativa Ilegal */}
+            <div className="max-w-full relative overflow-hidden">
+              {/* Borde izquierdo rojo grueso */}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-destructive via-destructive to-transparent rounded-full opacity-80" />
+              
+              <span className="status-badge mb-4 inline-flex border-destructive/50 bg-destructive/10">
+                <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                <span className="text-destructive font-heading">Actividades ilegales</span>
+              </span>
+              <h2 className="font-heading text-4xl md:text-5xl leading-tight mb-4">
+                Normativa <span className="text-destructive font-black">ILEGAL</span> del servidor
+              </h2>
+              <p className="text-muted-foreground mb-8 max-w-2xl border-l-2 border-destructive/30 pl-4">
+                Normas específicas para roles criminales, bandas, mafias y actividades ilegales dentro del servidor.
+              </p>
+              <a
+                href="https://docs.google.com/document/d/1GsgokUzP9biZUWc7AGslR3h90eX--XDXjLVL6KHkhdU/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-gta-illegal inline-flex items-center gap-2"
+              >
+                <FileText className="w-5 h-5" />
+                <span>Ver normativa ilegal</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
             </div>
           </div>
         </div>

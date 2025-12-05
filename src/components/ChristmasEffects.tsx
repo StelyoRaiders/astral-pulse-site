@@ -30,14 +30,14 @@ const BulbRow = ({ count, delayOffset = 0 }: { count: number; delayOffset?: numb
 
 export const ChristmasSectionWrapper = ({ children }: { children: React.ReactNode }) => (
   <div className="relative">
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-20">
-      <div className="relative w-full">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-20 overflow-hidden">
+      <div className="relative max-w-full">
         <div className="absolute inset-x-0 -top-1 h-px bg-gradient-to-r from-transparent via-foreground/30 to-transparent blur-sm opacity-30" />
         <BulbRow count={40} />
       </div>
     </div>
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
-      <div className="relative w-full">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 overflow-hidden">
+      <div className="relative max-w-full">
         <div className="absolute inset-x-0 -bottom-1 h-px bg-gradient-to-r from-transparent via-foreground/30 to-transparent blur-sm opacity-30" />
         <BulbRow count={36} delayOffset={0.35} />
       </div>
@@ -57,7 +57,7 @@ const ChristmasEffects = () => {
 
     const setSize = () => {
       canvas.width = window.innerWidth;
-      canvas.height = document.documentElement.scrollHeight;
+      canvas.height = window.innerHeight;
     };
     setSize();
     window.addEventListener("resize", setSize);
@@ -110,8 +110,8 @@ const ChristmasEffects = () => {
     <>
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 pointer-events-none z-0 opacity-50"
-        style={{ mixBlendMode: "screen" }}
+        className="fixed inset-0 pointer-events-none z-0 opacity-50 max-w-screen"
+        style={{ mixBlendMode: "screen", width: "100vw", height: "100vh" }}
       />
 
       {/* Orbes suaves alrededor de la pagina */}

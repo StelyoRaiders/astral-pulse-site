@@ -25,7 +25,7 @@ const AnimatedBackground = () => {
     // Configurar tamano del canvas
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
-      canvas.height = document.documentElement.scrollHeight;
+      canvas.height = window.innerHeight;
     };
     setCanvasSize();
     window.addEventListener("resize", setCanvasSize);
@@ -114,8 +114,8 @@ const AnimatedBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-60"
-      style={{ mixBlendMode: "screen" }}
+      className="fixed inset-0 pointer-events-none z-0 opacity-60 max-w-screen"
+      style={{ mixBlendMode: "screen", width: "100vw", height: "100vh" }}
     />
   );
 };

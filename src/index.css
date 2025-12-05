@@ -141,7 +141,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-body antialiased overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -241,23 +241,54 @@
     @apply skew-x-[-5deg];
     background-image: var(--gradient-primary);
     color: hsl(var(--background));
+    z-index: 1;
   }
 
   .btn-gta > span {
-    @apply skew-x-[5deg] inline-block;
+    @apply skew-x-[5deg] inline-block relative z-10;
   }
 
   .btn-gta::before {
     content: '';
     @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(135deg, hsl(var(--gta-yellow)), hsl(var(--gta-orange)));
+    background: linear-gradient(135deg, hsl(var(--gta-yellow) / 0.5), hsl(var(--gta-orange) / 0.3));
+    z-index: 0;
   }
 
   .btn-gta:hover::before {
-    @apply opacity-100;
+    @apply opacity-50;
   }
 
   .btn-gta:hover {
+    box-shadow: var(--shadow-glow-strong);
+    transform: skewX(-5deg) translateY(-3px);
+  }
+
+  .btn-gta-illegal {
+    @apply relative overflow-hidden px-8 py-4 font-heading text-xl tracking-wider uppercase;
+    @apply transition-all duration-300 ease-out;
+    @apply skew-x-[-5deg];
+    background-image: linear-gradient(135deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.8)) !important;
+    color: hsl(var(--background)) !important;
+    z-index: 1;
+  }
+
+  .btn-gta-illegal > span {
+    @apply skew-x-[5deg] inline-block relative z-10;
+  }
+
+  .btn-gta-illegal::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, hsl(var(--destructive) / 0.5), hsl(var(--destructive) / 0.3));
+    z-index: 0;
+  }
+
+  .btn-gta-illegal:hover::before {
+    @apply opacity-50;
+  }
+
+  .btn-gta-illegal:hover {
     box-shadow: var(--shadow-glow-strong);
     transform: skewX(-5deg) translateY(-3px);
   }
