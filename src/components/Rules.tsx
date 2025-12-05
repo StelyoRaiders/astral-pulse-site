@@ -45,22 +45,11 @@ const Rules = () => {
 
   return (
     <section id="rules" className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -left-24 top-10 w-[520px] h-[520px] bg-gradient-radial from-primary/10 via-transparent to-transparent blur-3xl" />
-        <div className="absolute right-0 bottom-0 w-[560px] h-[560px] bg-gradient-radial from-gta-blue/15 via-transparent to-transparent blur-4xl" />
-      </div>
-
       <div className="container relative z-10 px-4">
         <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 items-center">
           {/* Visual panel */}
           <div className="space-y-6">
             <div className="glass-dark relative overflow-hidden rounded-[32px] border border-border/20 p-8 min-h-[360px] flex flex-col justify-between">
-              <div className="absolute inset-0">
-                <div className="absolute -left-10 -top-10 w-64 h-64 bg-gradient-radial from-success/25 via-transparent to-transparent blur-3xl" />
-                <div className="absolute right-0 top-1/3 w-48 h-48 bg-gradient-radial from-warning/20 via-transparent to-transparent blur-3xl" />
-                <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-gradient-radial from-primary/20 via-transparent to-transparent blur-3xl" />
-              </div>
-
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Normativa</p>

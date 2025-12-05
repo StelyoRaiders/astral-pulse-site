@@ -3,12 +3,56 @@ import { ChevronDown, Copy, Users, Zap } from "lucide-react";
 import SantaOverlay from "./SantaOverlay";
 import { ENABLE_CHRISTMAS } from "@/config/featureFlags";
 import { toast } from "@/hooks/use-toast";
+import { fetchServerStatus } from "@/api/server-status";
+
+interface ServerData {
+  players: number;
+  maxPlayers: number;
+  isOnline: boolean;
+  hostname?: string | null;
+}
+
+const FIVEM_JOIN_CODE = import.meta.env.VITE_FIVEM_JOIN_CODE as string | undefined;
 
 const Hero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [serverData, setServerData] = useState<ServerData>({
+    players: 0,
+    maxPlayers: 256,
+    isOnline: false,
+    hostname: null,
+  });
+  const [isLoadingServer, setIsLoadingServer] = useState(true);
 
   useEffect(() => {
     setIsLoaded(true);
+  }, []);
+
+  // Cargar estado del servidor
+  useEffect(() => {
+    const loadServerStatus = async () => {
+      if (!FIVEM_JOIN_CODE) return;
+
+      try {
+        const result = await fetchServerStatus(FIVEM_JOIN_CODE);
+        setServerData({
+          players: result.players,
+          maxPlayers: result.maxPlayers,
+          isOnline: result.online,
+          hostname: result.hostname,
+        });
+      } catch (error) {
+        console.error("Error cargando estado del servidor:", error);
+      } finally {
+        setIsLoadingServer(false);
+      }
+    };
+
+    loadServerStatus();
+
+    // Actualizar cada 30 segundos
+    const interval = setInterval(loadServerStatus, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const copyIP = () => {
@@ -18,6 +62,10 @@ const Hero = () => {
       description: "La IP del servidor ha sido copiada al portapapeles",
     });
   };
+
+  const playerPercentage = serverData.maxPlayers 
+    ? Math.round((serverData.players / serverData.maxPlayers) * 100)
+    : 0;
 
   return (
     <section
@@ -70,8 +118,8 @@ const Hero = () => {
           <div 
             className={`status-badge mb-8 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}
           >
-            <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
-            <span>Server Online</span>
+            <span className={`w-2 h-2 rounded-full ${serverData.isOnline ? 'bg-success' : 'bg-destructive'} animate-pulse`} />
+            <span>{serverData.isOnline ? 'Server Online' : 'Server Offline'}</span>
           </div>
 
           {/* Main Title */}
@@ -100,16 +148,20 @@ const Hero = () => {
                   <Users className="w-5 h-5 text-primary" />
                   <span className="text-sm text-muted-foreground uppercase tracking-wider">Jugadores</span>
                 </div>
-                <p className="text-3xl font-heading text-gradient">128/256</p>
+                <p className="text-3xl font-heading text-gradient">
+                  {isLoadingServer ? '...' : `${serverData.players}/${serverData.maxPlayers}`}
+                </p>
               </div>
             </div>
             <div className="stat-card skew-x-[-3deg]">
               <div className="skew-x-[3deg]">
                 <div className="flex items-center gap-2 mb-1">
                   <Zap className="w-5 h-5 text-secondary" />
-                  <span className="text-sm text-muted-foreground uppercase tracking-wider">Uptime</span>
+                  <span className="text-sm text-muted-foreground uppercase tracking-wider">Capacidad</span>
                 </div>
-                <p className="text-3xl font-heading text-gradient">99.9%</p>
+                <p className="text-3xl font-heading text-gradient">
+                  {isLoadingServer ? '...' : `${playerPercentage}%`}
+                </p>
               </div>
             </div>
           </div>

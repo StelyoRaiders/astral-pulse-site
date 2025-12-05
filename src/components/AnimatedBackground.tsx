@@ -31,14 +31,14 @@ const AnimatedBackground = () => {
     window.addEventListener("resize", setCanvasSize);
 
     const colors = [
-      "rgba(255, 153, 0, 0.5)", // primary
-      "rgba(255, 204, 0, 0.4)", // secondary
-      "rgba(82, 183, 136, 0.35)", // gta-green
-      "rgba(51, 153, 204, 0.35)", // gta-blue
+      "rgba(255, 153, 0, 0.7)", // primary
+      "rgba(255, 204, 0, 0.6)", // secondary
+      "rgba(82, 183, 136, 0.55)", // gta-green
+      "rgba(51, 153, 204, 0.55)", // gta-blue
     ];
 
     const particles: Particle[] = [];
-    const particleCount = 90;
+    const particleCount = 220;
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -47,7 +47,7 @@ const AnimatedBackground = () => {
         size: Math.random() * 2.2 + 0.8,
         speedX: (Math.random() - 0.5) * 0.5,
         speedY: (Math.random() - 0.5) * 0.5,
-        opacity: Math.random() * 0.4 + 0.2,
+        opacity: Math.random() * 0.6 + 0.3,
         phase: Math.random() * Math.PI * 2,
         twinkleSpeed: Math.random() * 0.02 + 0.005,
         color: colors[Math.floor(Math.random() * colors.length)],
@@ -114,7 +114,7 @@ const AnimatedBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-30"
+      className="fixed inset-0 pointer-events-none z-0 opacity-60"
       style={{ mixBlendMode: "screen" }}
     />
   );

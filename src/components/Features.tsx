@@ -102,14 +102,6 @@ const Features = () => {
       {/* Background Effects */}
       <div className="absolute inset-0 bg-muted/30" />
       
-      {/* Efectos de luz decorativos */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-radial from-primary/5 via-transparent to-transparent blur-3xl animate-breathe" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-radial from-secondary/5 via-transparent to-transparent blur-3xl animate-breathe" style={{ animationDelay: '2s' }} />
-      
-      {/* Líneas decorativas */}
-      <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-      <div className="absolute bottom-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-secondary/20 to-transparent" />
-      
       <div className="container relative z-10 px-4">
         {/* Header */}
         <div className="text-center mb-16">

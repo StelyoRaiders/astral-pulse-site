@@ -114,7 +114,6 @@ const ServerStatus = () => {
       {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-full h-full bg-section-gradient opacity-50" />
-        <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-gradient-radial from-primary/10 via-transparent to-transparent -translate-y-1/2" />
       </div>
 
       <div className="container relative z-10 px-4">

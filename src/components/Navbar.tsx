@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Moon, Sun, Menu, X } from "lucide-react";
-import { useTheme } from "./ThemeProvider";
+import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 
 const Navbar = () => {
-  const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
@@ -32,8 +30,8 @@ const Navbar = () => {
   const navLinks = [
     { name: "Inicio", href: "#home" },
     { name: "Tienda", href: "#home" },
-    { name: "Caracter\u00c7\u00f0sticas", href: "#features" },
-    { name: "Galer\u00c7\u00f0a", href: "#gallery" },
+    { name: "Características", href: "#features" },
+    { name: "Galería", href: "#gallery" },
     { name: "Estado", href: "#status" },
   ];
 
@@ -73,17 +71,6 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="relative overflow-hidden"
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-
             <a href="https://whitelist.oasisrp.es/" className="hidden md:block btn-gta text-sm py-2 px-6">
               <span>WHITELIST</span>
             </a>
