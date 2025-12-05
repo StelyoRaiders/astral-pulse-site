@@ -1,4 +1,5 @@
 // API para obtener estado del servidor FiveM
+// Usa un proxy CORS para evitar problemas de seguridad del navegador
 
 interface InfoJson {
   server?: string;
@@ -38,20 +39,26 @@ export async function fetchServerStatus(
   host: string
 ): Promise<ServerStatusResponse> {
   try {
-    const base = `http://${host}`;
+    // Usar proxy CORS para evitar problemas de navegador
+    const proxyUrl = "https://api.allorigins.win/raw?url=";
+    const baseUrl = `http://${host}`;
 
     const [info, players] = await Promise.all([
       withTimeout(
-        fetch(`${base}/info.json`, { cache: "no-store" })
+        fetch(`${proxyUrl}${encodeURIComponent(`${baseUrl}/info.json`)}`, {
+          cache: "no-store",
+        })
           .then((r) => r.json() as Promise<InfoJson>)
           .catch(() => null),
-        5000
+        6000
       ),
       withTimeout(
-        fetch(`${base}/players.json`, { cache: "no-store" })
+        fetch(`${proxyUrl}${encodeURIComponent(`${baseUrl}/players.json`)}`, {
+          cache: "no-store",
+        })
           .then((r) => r.json() as Promise<PlayersJson[]>)
           .catch(() => null),
-        5000
+        6000
       ),
     ]);
 
@@ -89,6 +96,7 @@ export async function fetchServerStatus(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Error desconocido";
+    console.error("Server status error:", message);
     return {
       online: false,
       players: 0,
