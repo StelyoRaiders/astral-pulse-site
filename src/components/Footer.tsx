@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import logo from "../assets/logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -71,7 +72,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <a href="#home" className="inline-block mb-6">
+            <a href="#home" className="inline-flex items-center gap-4 mb-6">
+              <img src={logo} alt="Oasis RP Logo" className="w-20 h-20 object-contain" />
               <span className="font-heading text-4xl">
                 <span className="text-gradient">OASIS</span>
                 <span className="text-foreground ml-2">ROLEPLAY</span>

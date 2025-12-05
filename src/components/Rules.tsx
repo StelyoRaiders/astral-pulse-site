@@ -153,9 +153,9 @@ const Rules = () => {
 
         {/* Normativa Extensa y Normativa Ilegal */}
         <div className="mt-24 pt-24 border-t border-border/20">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-16 lg:gap-20">
             {/* Normativa Extensa */}
-            <div className="max-w-full relative overflow-hidden">
+            <div className="max-w-full relative overflow-hidden pl-6">
               {/* Borde izquierdo amarillo grueso */}
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary to-transparent rounded-full opacity-80" />
               
@@ -182,7 +182,7 @@ const Rules = () => {
             </div>
 
             {/* Normativa Ilegal */}
-            <div className="max-w-full relative overflow-hidden">
+            <div className="max-w-full relative overflow-hidden pl-6">
               {/* Borde izquierdo rojo grueso */}
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-destructive via-destructive to-transparent rounded-full opacity-80" />
               
