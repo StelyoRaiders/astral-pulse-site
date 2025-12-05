@@ -94,9 +94,9 @@ const Rules = () => {
               <span className="w-2 h-2 rounded-full bg-primary" />
               <span>Normas principales</span>
             </span>
-            <h2 className="font-heading text-5xl md:text-6xl leading-tight mb-3">
+            <h3 className="font-heading text-5xl md:text-6xl leading-tight mb-3">
               <span className="text-gradient">Reglas</span> del servidor
-            </h2>
+            </h3>
             <p className="text-muted-foreground mb-8 max-w-2xl">
               Para mantener la experiencia estable y justa, sigue las normas y respeta los limites de rol establecidos.
             </p>
@@ -152,60 +152,66 @@ const Rules = () => {
         </div>
 
         {/* Normativa Extensa y Normativa Ilegal */}
-        <div className="mt-24 pt-24 border-t border-border/20">
-          <div className="grid lg:grid-cols-2 gap-12">
+        <div className="mt-20 pt-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Normativa Extensa */}
-            <div className="max-w-full relative overflow-hidden">
+            <div className="glass-dark rounded-2xl p-6 md:p-8 border border-primary/20 relative overflow-hidden">
               {/* Borde izquierdo amarillo grueso */}
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-primary to-transparent rounded-full opacity-80" />
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-primary via-primary to-primary/30 rounded-r-full" />
               
-              <span className="status-badge mb-4 inline-flex">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-primary font-heading">Documentación completa</span>
-              </span>
-              <h2 className="font-heading text-4xl md:text-5xl leading-tight mb-4">
-                Normativa <span className="text-gradient">EXTENSA</span> del servidor
-              </h2>
-              <p className="text-muted-foreground mb-8 max-w-2xl border-l-2 border-primary/30 pl-4">
-                Para obtener más detalles sobre todas las reglas, políticas y procedimientos del servidor, consulta nuestro documento de normativa completa.
-              </p>
-              <a
-                href="https://docs.google.com/document/d/1WC5GTpRY6HwFp-NS7-KJuHNAJKM-ulOy7i3z7equo7I/edit?tab=t.0"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gta inline-flex items-center gap-2 py-3 px-8"
-              >
-                <FileText className="w-5 h-5" />
-                <span>Ver normativa extensa</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
+              <div className="pl-4">
+                <span className="status-badge mb-4 inline-flex">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+                  <span className="text-primary font-heading">Documentación completa</span>
+                </span>
+                <h3 className="font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-4">
+                  Normativa <span className="text-gradient">EXTENSA</span> del servidor
+                </h3>
+                <p className="text-muted-foreground mb-6 max-w-xl text-sm md:text-base">
+                  Para obtener más detalles sobre todas las reglas, políticas y procedimientos del servidor, consulta nuestro documento de normativa completa.
+                </p>
+                <a
+                  href="https://docs.google.com/document/d/1WC5GTpRY6HwFp-NS7-KJuHNAJKM-ulOy7i3z7equo7I/edit?tab=t.0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Ver normativa extensa del servidor en Google Docs"
+                  className="btn-gta inline-flex items-center gap-2 py-3 px-6 md:px-8 text-sm md:text-base"
+                >
+                  <FileText className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
+                  <span>Ver normativa extensa</span>
+                  <ExternalLink className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" />
+                </a>
+              </div>
             </div>
 
             {/* Normativa Ilegal */}
-            <div className="max-w-full relative overflow-hidden">
+            <div className="glass-dark rounded-2xl p-6 md:p-8 border border-destructive/20 relative overflow-hidden">
               {/* Borde izquierdo rojo grueso */}
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-destructive via-destructive to-transparent rounded-full opacity-80" />
+              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-destructive via-destructive to-destructive/30 rounded-r-full" />
               
-              <span className="status-badge mb-4 inline-flex border-destructive/50 bg-destructive/10">
-                <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
-                <span className="text-destructive font-heading">Actividades ilegales</span>
-              </span>
-              <h2 className="font-heading text-4xl md:text-5xl leading-tight mb-4">
-                Normativa <span className="text-destructive font-black">ILEGAL</span> del servidor
-              </h2>
-              <p className="text-muted-foreground mb-8 max-w-2xl border-l-2 border-destructive/30 pl-4">
-                Normas específicas para roles criminales, bandas, mafias y actividades ilegales dentro del servidor.
-              </p>
-              <a
-                href="https://docs.google.com/document/d/1GsgokUzP9biZUWc7AGslR3h90eX--XDXjLVL6KHkhdU/edit?usp=sharing"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gta-illegal inline-flex items-center gap-2"
-              >
-                <FileText className="w-5 h-5" />
-                <span>Ver normativa ilegal</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
+              <div className="pl-4">
+                <span className="status-badge mb-4 inline-flex border-destructive/50 bg-destructive/10">
+                  <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" aria-hidden="true" />
+                  <span className="text-destructive font-heading">Actividades ilegales</span>
+                </span>
+                <h3 className="font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-4">
+                  Normativa <span className="text-destructive font-black">ILEGAL</span> del servidor
+                </h3>
+                <p className="text-muted-foreground mb-6 max-w-xl text-sm md:text-base">
+                  Normas específicas para roles criminales, bandas, mafias y actividades ilegales dentro del servidor.
+                </p>
+                <a
+                  href="https://docs.google.com/document/d/1GsgokUzP9biZUWc7AGslR3h90eX--XDXjLVL6KHkhdU/edit?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Ver normativa ilegal del servidor en Google Docs"
+                  className="btn-gta-illegal inline-flex items-center gap-2 py-3 px-6 md:px-8 text-sm md:text-base"
+                >
+                  <FileText className="w-4 h-4 md:w-5 md:h-5" aria-hidden="true" />
+                  <span>Ver normativa ilegal</span>
+                  <ExternalLink className="w-3 h-3 md:w-4 md:h-4" aria-hidden="true" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

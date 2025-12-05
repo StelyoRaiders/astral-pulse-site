@@ -1,15 +1,28 @@
-import { Fragment } from "react";
+import { Fragment, lazy, Suspense } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import ImageCarousel from "@/components/ImageCarousel";
-import ServerStatus from "@/components/ServerStatus";
-import Footer from "@/components/Footer";
 import AnimatedBackground from "@/components/AnimatedBackground";
-import Rules from "@/components/Rules";
-import { ChristmasSectionWrapper } from "@/components/ChristmasEffects";
-import ScrollToTop from "@/components/ScrollToTop";
 import { ENABLE_CHRISTMAS } from "@/config/featureFlags";
+
+// Lazy load componentes que no son críticos para el primer render
+const Features = lazy(() => import("@/components/Features"));
+const ImageCarousel = lazy(() => import("@/components/ImageCarousel"));
+const ServerStatus = lazy(() => import("@/components/ServerStatus"));
+const Footer = lazy(() => import("@/components/Footer"));
+const Rules = lazy(() => import("@/components/Rules"));
+const ScrollToTop = lazy(() => import("@/components/ScrollToTop"));
+const ChristmasEffects = lazy(() => 
+  import("@/components/ChristmasEffects").then(mod => ({ 
+    default: mod.ChristmasSectionWrapper 
+  }))
+);
+
+// Componente de fallback mínimo para evitar layout shift
+const SectionFallback = () => (
+  <div className="min-h-[200px] flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 const Index = () => {
   return (
@@ -17,24 +30,38 @@ const Index = () => {
       <AnimatedBackground />
       <Navbar />
       {ENABLE_CHRISTMAS ? (
-        <ChristmasSectionWrapper>
-          <Hero />
-        </ChristmasSectionWrapper>
+        <Suspense fallback={<Hero />}>
+          <ChristmasEffects>
+            <Hero />
+          </ChristmasEffects>
+        </Suspense>
       ) : (
         <Hero />
       )}
-      <ServerStatus />
-      <Features />
-      <ImageCarousel />
-      <Rules />
-      {ENABLE_CHRISTMAS ? (
-        <ChristmasSectionWrapper>
+      <Suspense fallback={<SectionFallback />}>
+        <ServerStatus />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <Features />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <ImageCarousel />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        <Rules />
+      </Suspense>
+      <Suspense fallback={<SectionFallback />}>
+        {ENABLE_CHRISTMAS ? (
+          <ChristmasEffects>
+            <Footer />
+          </ChristmasEffects>
+        ) : (
           <Footer />
-        </ChristmasSectionWrapper>
-      ) : (
-        <Footer />
-      )}
-      <ScrollToTop />
+        )}
+      </Suspense>
+      <Suspense fallback={null}>
+        <ScrollToTop />
+      </Suspense>
     </main>
   );
 };

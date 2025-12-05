@@ -116,14 +116,20 @@ const Navbar = () => {
               size="icon"
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         <div
+          id="mobile-menu"
+          role="navigation"
+          aria-label="Menú de navegación móvil"
           className={`md:hidden overflow-hidden transition-all duration-300 ${
             isMenuOpen ? "max-h-80 pb-6" : "max-h-0"
           }`}

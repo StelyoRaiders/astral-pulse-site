@@ -150,8 +150,9 @@ const ServerStatus = () => {
                     size="icon"
                     className="hover:bg-primary/20"
                     disabled={isRefreshing}
+                    aria-label="Actualizar estado del servidor"
                   >
-                    <RefreshCw className={`w-5 h-5 ${isRefreshing ? "animate-spin" : ""}`} />
+                    <RefreshCw className={`w-5 h-5 ${isRefreshing ? "animate-spin" : ""}`} aria-hidden="true" />
                   </Button>
                 </div>
 

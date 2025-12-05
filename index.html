@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,6 +7,13 @@
     <meta name="description" content="Roleplay bajo el sol: palmeras, economía equilibrada, eventos, comunidad activa. Únete a Oasis RP." />
     <meta name="keywords" content="FiveM, roleplay, GTA V, RP server, Oasis RP, gaming" />
     <meta name="author" content="Oasis RP" />
+
+    <!-- Preconnect para recursos externos -->
+    <link rel="preconnect" href="https://servers-frontend.fivem.net" crossorigin />
+    <link rel="dns-prefetch" href="https://servers-frontend.fivem.net" />
+    
+    <!-- Preload de fuentes críticas si las hay -->
+    <link rel="preload" href="/src/main.tsx" as="script" crossorigin />
 
     <meta property="og:title" content="Oasis RP | FiveM Roleplay" />
     <meta property="og:description" content="Roleplay bajo el sol: palmeras, economía equilibrada, eventos, comunidad activa. Únete a Oasis RP." />
@@ -19,11 +26,23 @@
     <meta name="twitter:image" content="https://oasisrp.es/banner.png" />
     
     <link rel="canonical" href="https://oasisrp.es" />
-    
+
+    <!-- Inline critical CSS para reducir render blocking -->
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box}
+      html{scroll-behavior:smooth}
+      body{background:#0a0a0a;color:#fff;font-family:system-ui,-apple-system,sans-serif}
+      #root{min-height:100vh}
+      .loading-spinner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border:3px solid rgba(255,255,255,.1);border-top-color:#3b82f6;border-radius:50%;animation:spin 1s linear infinite}
+      @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Loading spinner inicial mientras carga React -->
+      <div class="loading-spinner"></div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
