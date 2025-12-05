@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -7,6 +8,34 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Solo prevenir default si es un anchor y estamos en home
+    if (href.startsWith("#") && isHomePage) {
+      e.preventDefault();
+      setIsMenuOpen(false);
+      
+      if (href === "#home") {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        return;
+      }
+      
+      const targetId = href.replace("#", "");
+      const element = document.getElementById(targetId);
+      
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,11 +57,12 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: "Inicio", href: "#home" },
-    { name: "Tienda", href: "#home" },
-    { name: "Características", href: "#features" },
-    { name: "Galería", href: "#gallery" },
-    { name: "Estado", href: "#status" },
+    { name: "Inicio", href: isHomePage ? "#home" : "/" },
+    { name: "Tienda", href: isHomePage ? "#home" : "/" },
+    { name: "Características", href: isHomePage ? "#features" : "/#features" },
+    { name: "Galería", href: isHomePage ? "#gallery" : "/#gallery" },
+    { name: "Estado", href: isHomePage ? "#status" : "/#status" },
+    { name: "Normativa", href: isHomePage ? "#normativa" : "/#normativa" },
   ];
 
   return (
@@ -44,7 +74,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20 relative">
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group">
             <div className="relative">
               <span className="font-heading text-3xl text-gradient tracking-wider">
                 OASIS
@@ -53,7 +83,7 @@ const Navbar = () => {
                 RP
               </span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -61,6 +91,7 @@ const Navbar = () => {
               <a
                 key={link.name}
                 href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="relative font-heading text-lg uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300 group"
               >
                 {link.name}
@@ -85,14 +116,20 @@ const Navbar = () => {
               size="icon"
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         <div
+          id="mobile-menu"
+          role="navigation"
+          aria-label="Menú de navegación móvil"
           className={`md:hidden overflow-hidden transition-all duration-300 ${
             isMenuOpen ? "max-h-80 pb-6" : "max-h-0"
           }`}
@@ -102,7 +139,7 @@ const Navbar = () => {
               <a
                 key={link.name}
                 href={link.href}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="font-heading text-lg uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors py-2"
               >
                 {link.name}

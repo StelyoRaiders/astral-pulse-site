@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import { ChevronDown, Copy, Users, Zap } from "lucide-react";
 import SantaOverlay from "./SantaOverlay";
 import { ENABLE_CHRISTMAS } from "@/config/featureFlags";
@@ -14,8 +14,10 @@ interface ServerData {
 
 const FIVEM_JOIN_CODE = import.meta.env.VITE_FIVEM_JOIN_CODE as string | undefined;
 
-const Hero = () => {
+const Hero = memo(() => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [serverData, setServerData] = useState<ServerData>({
     players: 0,
     maxPlayers: 256,
@@ -26,6 +28,10 @@ const Hero = () => {
 
   useEffect(() => {
     setIsLoaded(true);
+    // Cargar video después del primer render
+    if (videoRef.current) {
+      videoRef.current.load();
+    }
   }, []);
 
   // Cargar estado del servidor
@@ -73,20 +79,26 @@ const Hero = () => {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Video Background */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0" aria-hidden="true">
+        {/* Placeholder mientras carga el video */}
+        <div 
+          className={`absolute inset-0 bg-gradient-to-br from-background via-background/95 to-primary/10 transition-opacity duration-1000 ${videoLoaded ? 'opacity-0' : 'opacity-100'}`}
+        />
         <video
+          ref={videoRef}
           autoPlay
           muted
           loop
           playsInline
-          className="w-full h-full object-cover"
+          preload="none"
+          onLoadedData={() => setVideoLoaded(true)}
+          aria-label="Video de fondo decorativo del servidor Oasis RP"
+          className={`w-full h-full object-cover transition-opacity duration-1000 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
         >
-          {/* Aquí puedes poner tu video - actualmente usa un video de ejemplo */}
           <source
             src="/video.mp4"
             type="video/mp4"
           />
-          {/* Agrega más formatos para mejor compatibilidad */}
           <source
             src="/video.webm"
             type="video/webm"
@@ -202,6 +214,8 @@ const Hero = () => {
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-background" style={{ clipPath: 'polygon(0 100%, 100% 100%, 100% 0, 0 100%)' }} />
     </section>
   );
-};
+});
+
+Hero.displayName = "Hero";
 
 export default Hero;
